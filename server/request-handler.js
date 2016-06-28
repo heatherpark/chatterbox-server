@@ -21,7 +21,18 @@ module.exports = function(request, response) {
     statusCode = statusCode || 200;
     res.writeHead(statusCode, headers);
     res.end(JSON.stringify(data));
-  }
+  };
+
+  var collectData = function(req, cb) {
+    var data = '';
+    req.on('data', function(chunk) {
+      data += chunk;
+    });
+
+    req.on('end', function() {
+      cb(JSON.parse(data));
+    });
+  };
 
   var methods = {
     GET: function(req, res) {
@@ -29,8 +40,10 @@ module.exports = function(request, response) {
       sendResponse(data, headers);
     },
     POST: function(req, res) {
-      var successData = {result: 'POST request made'};
-      sendResponse(successData, headers, 201);
+      collectData(req, function() {
+        var successData = {result: 'POST request made'};
+        sendResponse(successData, headers, 201);
+      });
     },
     OPTIONS: function(req, res) {
       sendResponse(res, null);
