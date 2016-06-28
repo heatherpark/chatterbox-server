@@ -23,8 +23,19 @@ module.exports = function(request, response) {
     res.end(JSON.stringify(data));
   }
 
-
-
+  var methods = {
+    GET: function(req, res) {
+      var data = {result: 'GET request made'};
+      sendResponse(data, headers);
+    },
+    POST: function(req, res) {
+      var successData = {result: 'POST request made'};
+      sendResponse(successData, headers, 201);
+    },
+    OPTIONS: function(req, res) {
+      sendResponse(res, null);
+    }
+  };
 };
 
 
